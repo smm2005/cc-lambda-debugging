@@ -1,5 +1,7 @@
 name: tester
-on: push
+on:
+  pull_request:
+    branches: [ dev ]
 jobs: 
   test-validator:
     runs-on: ubuntu-latest
@@ -10,4 +12,4 @@ jobs:
       - name: Checkout to working directory
       - uses: actions/checkout@v5
       - name: Run tests
-      - run: insert_test_path_here
+      - run: test_lambda_function1.py
