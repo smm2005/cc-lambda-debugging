@@ -33,35 +33,27 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: .
+        working-directory: ../
     steps:
       - name: Checkout to working directory
         uses: actions/checkout@v5
+        
       - name: Run Easy tests
         env:
           PR_USER: ${{ github.event.pull_request.user.login }}
           PR_DATE: ${{ github.event.pull_request.created_at}}
         run: |
-          case=$(python3 challenges/easy/test_lambda_function1.py | tail -1)
-          if [ -n `grep $PR_USER leaderboard` ]; then
-            last=`echo $case | grep FAILED`
-            last=`echo $last | sed -e 's/[^0-9]/ /g'`
-            if [ ! "$last" =~ [0-9] ]; then
-              echo "$PR_USER $PR_DATE 10" >> leaderboard
-            else
-              number=`echo $last | xargs`
-              if [ `wc -w $number` -eq 2]; then
-                failures=`$number | cut -d " " -f 1`
-                errors=`$number | cut -d " " -f 2`
-                echo "$PR_USER $PR_DATE $((10-$failures-$errors))" >> leaderboard
-              else
-                echo "$PR_USER $PR_DATE $((10-$number))" >> leaderboard
-              fi
-            fi
-          fi
+          chmod +x easy.sh
+          ./easy.sh $PR_USER $PR_DATE
 
       - name: Run Medium tests
-        run: python3 challenges/medium/test_lambda_function2.py
+        env:
+          PR_USER: ${{ github.event.pull_request.user.login }}
+          PR_DATE: ${{ github.event.pull_request.created_at}}
+        run: |
+          chmod +x easy.sh
+          ./easy.sh $PR_USER $PR_DATE
+
       - name: Run Hard tests
         run: python3 challenges/hard/test_lambda_function3.py
 
