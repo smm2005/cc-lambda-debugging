@@ -23,7 +23,8 @@ import json
 def lambda_handler(event, context=None):
 
     word = event['word']
-    res = []
+    res = ""
+    dic = {'a': "Alpha", 'e': "Echo", 'i': "India", 'o': "Oscar", 'u': "Uniform", 'y': "Yankee"}
 
     if word == None:
         return {
@@ -32,7 +33,10 @@ def lambda_handler(event, context=None):
         }
     
     for char in word:
-        res.append(char)
+        if char in dic:
+            res = res + dic[char]
+        else:
+            res = res + char
 
     return {
         'statusCode': 200,
