@@ -21,6 +21,7 @@ def lambda_handler(event, context=None):
 
     expr = event['expression']
     res = 0
+    track = []
 
     if expr == None:
         return {
@@ -34,10 +35,20 @@ def lambda_handler(event, context=None):
     for char in expr:
 
         if char in ["+", "-", "/", "*"]:
-            pass
+            b = track.pop()
+            a = track.pop()
+            if char == '+':
+                track.append(a + b)
+            elif char == '-':
+                track.append(a - b)
+            elif char == '/':
+                track.append(a / b)
+            else:
+                track.append(a * b)
         else:
-            res.append(char)
+            track.append(int(char))
 
+    res = track[0]
     return {
         'statusCode': 200,
         'body': res
