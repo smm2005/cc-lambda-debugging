@@ -33,6 +33,12 @@ def lambda_handler(event, context=None):
     
     for char in word:
         res.append(char)
+        if (char = 'a', 'e', 'i', 'o', 'u', 'Y'){
+            return{
+                'statusCode': 200,
+                'body': char = 'Alpha'
+            }
+        }
 
     return {
         'statusCode': 200,
