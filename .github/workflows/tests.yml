@@ -42,10 +42,29 @@ jobs:
       - name: Run Easy tests
         env:
           PR_USER: ${{ github.event.pull_request.user.login }}
-          PR_DATE: ${{ github.event.pull_request.created_at}}
+          PR_DATE: ${{ github.event.pull_request.created_at }}
         run: |
-          chmod +x ./easy.sh
-          ./easy.sh $PR_USER $PR_DATE
+          touch placeholder
+          python3 -u challenges/easy/test_lambda_function1.py 2> placeholder 
+          cat placeholder
+          case="$(cat placeholder | tail -n 1)"
+          rm placeholder
+          if [ -n `cat leaderboard | grep $PR_USER` ]; then
+              last="`echo $case | sed -e 's/[^0-9]/ /g'`"
+              if [[ "$last" =~ "[0-9]" ]]; then
+                  echo $last
+                  echo "$PR_USER $PR_DATE 10" >> leaderboard
+              else
+                  number=`echo $last | xargs`
+                  if [ `echo $number | wc -w` -eq 2 ]; then
+                      failures=`$number | cut -d " " -f 1`
+                      errors=`$number | cut -d " " -f 2`
+                      echo "$PR_USER $PR_DATE $((10-$failures-$errors))" >> leaderboard
+                  else
+                      echo "$PR_USER $PR_DATE $((10-$number))" >> leaderboard
+                  fi
+              fi
+          fi
 
       - name: Run Medium tests
         env:
